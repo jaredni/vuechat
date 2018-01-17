@@ -1,0 +1,29 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ChannelChat</title>
+	<span id="foo"></span>
+	<script type = "text/javascript" data-main="{% static 'messaging/js/common' %}" src="{% static 'messaging/js/require.js' %}"></script>
+	{% block css %}{% endblock %}
+</head>
+<body>
+	<h1>ChannelChat</h1>
+	<div>				
+		<span style="float: right;">
+			{{ user.username }} <a href="{% url 'logout' %}">Logout</a>
+		</span>	
+	</div>
+	<br>
+	<hr>
+	<div>		
+		{% block content %}{% endblock %}
+	</div>
+</body>
+<script type="text/javascript">
+	// global variable
+	currentUserPK = {{ request.user.id }};
+</script>
+{% block javascript %}{% endblock %}
+</html>

@@ -1,0 +1,64 @@
+{% extends 'messaging/base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+<h2>{{ CONVERSATION.title|upper }}</h2>
+<input class="js-searchUserInput" type="text" name="searched_user" data-url="{% url 'messaging:search-user' %}" autocomplete="off" placeholder="Search username here..." data-append="existingGroupMessage">
+
+<ul class="js-searchUserUl" data-addurl="{% url 'messaging:add-participant' CONVERSATION.pk 0 %}">
+	<!-- <li>
+		<input type="submit" value="Add user"> Username
+	</li> -->
+</ul>
+<h2>Participants</h2>
+<ul class="participants" data-removeurl="{% url 'messaging:remove-participant' CONVERSATION.pk 0 %}">
+	{% for user in CONVERSATION.participants.all %}
+		{% if user != request.user %}
+			<li class="{{ user.username }}" data-pk="{{ user.id }}">
+				<input class="js-removeUserButton" data-getconversationurl="{% url 'messaging:remove-participant' CONVERSATION.pk user.pk %}" type="submit" value="Remove">
+				{{ user.username }}
+			</li>
+		{% endif %}
+	{% endfor %}
+</ul>
+<div class="js-loadPreviousMessagesDiv" data-loadpreviousmessages="{% url 'messaging:load-previous-messages' %}"></div>
+<div class="js-conversationDiv" data-pk="{{ CONVERSATION.id }}" data-getmessageurl="{% url 'messaging:new-messages' %}" data-messagescount="{{ MESSAGES.count }}">
+	{% if MESSAGES %}
+	{% for msg in MESSAGES|slice:":5" reversed %}
+		{% if msg.when < POLL_TIME %}
+		<p data-pk="{{ msg.id }}"><b>{{ msg.sender }}</b>: {{ msg.text }} ({{ msg.when }})</p>
+		{% endif %}
+	{% endfor %}
+	{% endif %}
+</div>
+<form action="" method="post" id="chatarea">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<input type="submit" value="Send Message">
+</form>
+{% endblock %}
+{% block javascript %}
+<script>
+require(['common', 'zepto', 'utils/csrf_token'],function(_, Zepto, csrf_token) {
+
+	require(['message', 'search/user/user']);
+
+    csrftoken = csrf_token.getCookie('csrftoken');
+
+    Zepto('.participants').find("input").on('click', function(e) {
+        e.preventDefault();
+        conversationUrl = Zepto(this).data('getconversationurl');
+        Zepto.ajax({
+            url : conversationUrl,
+            type: "POST",
+            data: {'csrfmiddlewaretoken': csrftoken},
+            success: function (response) {
+                Zepto('.participants .' + response).remove();
+            },
+        });
+        
+    });
+});
+</script>
+{% endblock %}

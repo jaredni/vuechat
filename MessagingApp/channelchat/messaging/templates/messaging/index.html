@@ -1,0 +1,71 @@
+{% extends 'messaging/base.html' %}
+
+{% block content%}
+<input class="js-searchUserInput" type="text" name="searched_user" data-url="{% url 'messaging:search-user' %}" autocomplete="off" placeholder="Search username here..." data-append="normal">
+
+<h2>Search List</h2>
+<ul class="js-searchUserUl" data-url="{% url 'messaging:search-user' %}">
+	<!-- <li>
+		<a href="">Send Message</a> Username
+	</li> -->
+</ul>
+<h2> Personal Messages ({{ PRIVATE_CONVO.count }}) </h2>
+{% if PRIVATE_CONVO %}
+<ul>
+	{% for conversation in PRIVATE_CONVO %}
+		<li>
+			{% for user in conversation.participants.all %}
+			{% if user != LOGGED_IN %}
+				<a href="{% url 'messaging:send-private-message' user.id %}"> Send message </a>
+				{% for unseen_user in conversation.message_conversations.last.unseen_by.all %}
+					{% if unseen_user == LOGGED_IN %}
+						<b>(new)</b>
+					{% endif %}
+				{% endfor %}
+				{{ user.username }}
+			{% endif %}
+			{% endfor %}
+		</li>
+	{% endfor %}
+</ul>
+{% else %}
+	<h2>No Personal Messages</h2>
+{% endif %}
+
+<h2> Group Messages ({% if GROUP_CONVO %}{{ GROUP_CONVO.count }}{% else %} 0 {% endif %}) <a href="{% url 'messaging:create-group-conversation' %}">Create group message</a></h2>
+{% if GROUP_CONVO %}
+<ul>
+	{% for conversation in GROUP_CONVO %}
+	<li>
+		<a href="{% url 'messaging:send-group-conversation' conversation.id %}">Send message</a>
+		{% for unseen_user in conversation.message_conversations.last.unseen_by.all %}
+			{% if unseen_user == LOGGED_IN %}
+				<b>(new)</b>
+			{% endif %}
+		{% endfor %}
+		{{ conversation.title }}
+		({% for user in conversation.participants.all %}
+		{% if user != LOGGED_IN %}
+		{{ user.username }}{% if not forloop.last %}, {% endif %}
+		{% endif %}
+		{% endfor %})
+	</li>
+	{% endfor %}
+</ul>
+{{ form }}
+{% else %}
+	<h2>No Group Messages</h2>
+{% endif %}
+<div id="sampleArea">
+
+</div>
+{% endblock%}
+{% block javascript %}
+<script type="text/javascript">
+require(['common', 'utils/mustache', 'zepto'],function(_, Mustache, Zepto) {
+
+	require(['search/user/user']);
+});
+</script>
+
+{% endblock %}

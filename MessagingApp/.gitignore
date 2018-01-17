@@ -1,0 +1,7 @@
+db.sqlite
+db.sqlite3
+*.pyc
+local_settings.py
+celerybeat-schedule
+dump.rdb
+prod_settings.py

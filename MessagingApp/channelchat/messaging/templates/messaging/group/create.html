@@ -1,0 +1,55 @@
+{% extends 'messaging/base.html' %}
+
+{% block content %}
+<h2>Create Group Conversation</h2>
+<input class="js-searchUserInput" type="text" name="searched_user" data-url="{% url 'messaging:search-user' %}" autocomplete="off" placeholder="Search username here..." data-append="createGroupMessage">
+<h3>Search List</h3>
+<ul class="js-searchUserUl">
+	<!-- <li>
+		<input type="submit" value="Add user"> Username
+	</li> -->
+</ul>
+<h3>Participants</h3>
+<ul class="js-participantsUl">
+	<!-- <li>
+		<input type="submit" value="Remove User"> Username
+	</li> -->
+</ul>
+{{ form.participants.errors }}
+<form class="js-chatForm" action="{% url 'messaging:create-group-conversation' %}" method="post">
+	{% csrf_token %}
+	<p>
+	{{ form.title }}
+	</p>
+	<input type="hidden" value="" class="participant_pks" name="participant_pks" required/>
+	<input type="submit" value="Create Group">
+</form> 
+{% endblock %}
+{% block javascript %}
+<script>
+require(['common', 'zepto'],function(_, Zepto) {
+	participantsPK = [currentUserPK];
+
+	require(['message', 'search/user/user']);
+
+	Zepto(document).ready(function () {
+        Zepto('.js-chatForm').on('submit', function(e) {
+            e.preventDefault();
+            if(participantsPK.length==0) {
+                alert('No participants added!');
+            } else {
+                Zepto.ajax({
+                    url : Zepto(this).attr('action'),
+                    type: "POST",
+                    data: Zepto(this).serialize(),
+                    success: function (response) {
+                        window.location.href = response;
+                    },
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+

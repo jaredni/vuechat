@@ -1,0 +1,28 @@
+{% extends 'messaging/base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+<p><b>Recepient: </b>{{ RECEIVER }}</p>
+<div class="js-loadPreviousMessagesDiv" data-loadpreviousmessages="{% url 'messaging:load-previous-messages' %}"></div>
+<div class="js-conversationDiv" data-pk="{{ CONVERSATION.id }}" data-getmessageurl="{% url 'messaging:new-messages' %}" data-messagescount="{{ MESSAGES.count }}">
+	{% if MESSAGES %}
+	{% for msg in MESSAGES|slice:":5" reversed %}
+		<p data-pk="{{ msg.id }}" ><b>{{ msg.sender }}</b>: {{ msg.text }} ({{ msg.when }})</p>
+	{% endfor %}
+	{% endif %}
+</div>
+<form action="" method="post" id="chatarea">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<input class="submit" type="submit" value="Send" />
+</form>
+{% endblock %}
+{% block javascript %}
+<script>
+require(['common'],function() {
+
+	require(['message']);
+});
+</script>
+{% endblock %}

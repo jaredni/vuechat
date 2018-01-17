@@ -3,5 +3,6 @@ requirejs.config({
     paths: {
         zepto: 'zepto',
         mustache: 'mustache',
+        vue: 'vue',
     },
 });

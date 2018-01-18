@@ -68,9 +68,10 @@
 {% endblock%}
 {% block javascript %}
 <script type="text/javascript">
-require(['common', 'utils/mustache', 'zepto', 'utils/vue'],function(_, Mustache, Zepto, Vue) {
+require(['common', 'utils/mustache', 'zepto'],function(_, Mustache, Zepto) {
 
 	require(['search/user/user']);
+	require(['vuejs/search/user/user']);
 });
 </script>
 

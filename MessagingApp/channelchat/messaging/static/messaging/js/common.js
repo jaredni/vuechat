@@ -4,5 +4,6 @@ requirejs.config({
         zepto: 'zepto',
         mustache: 'mustache',
         vue: 'vue',
+        requirevue: 'requirejs-vue',
     },
 });

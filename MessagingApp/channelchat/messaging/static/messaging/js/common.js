@@ -5,5 +5,6 @@ requirejs.config({
         mustache: 'mustache',
         vue: 'vue',
         requirevue: 'requirejs-vue',
+        vuerouter: 'vue-router',
     },
 });

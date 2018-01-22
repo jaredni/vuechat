@@ -1,3 +1,3 @@
-# Messaging App
+# Messaging App using [Vuejs](https://vuejs.org/)
 
-This project is for the new developers to familiarize the technology being used in channelfix. 
+This project is to let the messaging app made during training use vuejs.
